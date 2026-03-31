@@ -3,34 +3,16 @@ import Header from "../header/Header";
 import axios from "axios";
 import Api from "../../Api";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function Product(){
     const navigate = useNavigate();
-    const [state,dispatch] = useReducer((state,action)=>{
-        if(action.type == "set-product")
-            state.productList = action.payload
-        return {...state}
-    },{
-        productList: []
-    });
-    useEffect(()=>{
-        loadProducts();
-    },[]);
-    const loadProducts = async()=>{
-        try{
-           let response =  await axios.get(Api.FETCH_PRODUCTS);
-           console.log(response.data);
-           dispatch({type: 'set-product',payload: response.data.products})
-        }
-        catch(err){
-            console.log(err);
-        }
-    }
+    const {isLoading,error,productList} = useSelector((store)=>store.products);
     return <>
       <Header/>
       <div className="container mt-2">
         <div className="row">
-            {state.productList.map((product,index)=>{return <div key={product.id} className="col-md-3 p-2">
+            {(!error) && productList?.map((product,index)=>{return <div key={product.id} className="col-md-3 p-2">
                <div className="d-flex flex-column justify-content-center align-items-center" style={{height:"350px",boxShadow:"10px 10px 10px blue"}}>
                  <img src={product.thumbnail} height="200px"/>
 
